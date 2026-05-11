@@ -370,7 +370,7 @@
 <!-- 视频弹窗 -->
 <div class="video-modal" id="videoModal">
     <button class="close-video" onclick="closeVideo()">×</button>
-    <video controls src="https://cdn.jsdelivr.net/gh/AMGAQ/zhoulian@main/video.mp4"></video>
+    <video controls src="video.mp4"></video>
 </div>
 
 <!-- 世界观 -->
@@ -480,7 +480,7 @@
 
         // 手机点击震动动画
         if (window.innerWidth <= 768) {
-            document.querySelector('nav').classList.add('phone-touch');
+            document.querySelector('nav').class.add('phone-touch');
             setTimeout(() => {
                 document.querySelector('nav').classList.remove('phone-touch');
             }, 400);
