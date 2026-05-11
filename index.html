@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>周の恋 - 官方网站</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            background-color: #111;
+            color: #fff;
+            overflow-x: hidden;
+            transition: background 0.4s ease;
+        }
+
+        /* 导航栏 */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 100;
+            text-align: center;
+            border-bottom: 1px solid #ff69b4;
+            backdrop-filter: blur(10px);
+            transition: 0.4s;
+        }
+
+        nav img {
+            height: 40px;
+            vertical-align: middle;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 10px;
+            font-size: 16px;
+            vertical-align: middle;
+            position: relative;
+            transition: 0.3s;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background: #ff69b4;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            color: #ff69b4;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        /* 首屏 */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('bg_photo.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            animation: bgBreath 12s infinite alternate ease-in-out;
+            padding: 0 20px;
+        }
+
+        @keyframes bgBreath {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.15); }
+        }
+
+        .hero h1 {
+            font-size: 50px;
+            color: #ff69b4;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px #ff69b4, 2px 2px 0 #000;
+            opacity: 0;
+            animation: fadeIn 1.2s 0.2s forwards, float 3s 1.5s infinite ease-in-out;
+        }
+
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+            opacity: 0;
+            animation: fadeIn 1.2s 0.6s forwards;
+        }
+
+        /* 视频按钮 */
+        .video-btn {
+            padding: 14px 32px;
+            background: #ff69b4;
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+            opacity: 0;
+            animation: fadeIn 1.2s 1s forwards;
+        }
+        .video-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 0 15px #ff69b4;
+        }
+
+        /* 视频弹窗 */
+        .video-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .video-modal.show {
+            display: flex;
+        }
+        .video-modal video {
+            max-width: 90%;
+            max-height: 80vh;
+            border: 2px solid #ff69b4;
+            border-radius: 12px;
+        }
+        .close-video {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            font-size: 40px;
+            color: #ff69b4;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        /* 板块 */
+        .section {
+            padding: 80px 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: 1s ease;
+        }
+
+        .section.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-title {
+            font-size: 32px;
+            border-bottom: 2px solid #ff69b4;
+            display: inline-block;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            color: #ff69b4;
+            text-shadow: 0 0 10px #ff69b4;
+        }
+
+        /* 角色卡片（苹果式放大动画） */
+        .char-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            text-align: left;
+            transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(30px);
+            gap: 20px;
+        }
+
+        .char-card.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 苹果式放大 */
+        .char-card:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 12px 25px rgba(255, 105, 180, 0.25);
+            border-color: #ff69b4;
+        }
+
+        .char-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,105,180,0.08), transparent);
+            transition: 0.8s;
+        }
+
+        .char-card:hover::before {
+            left: 100%;
+        }
+
+        .char-img {
+            width: 160px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 2px solid #ff69b4;
+            transition: 0.4s ease;
+            flex-shrink: 0;
+        }
+
+        .char-card:hover .char-img {
+            transform: scale(1.03);
+            box-shadow: 0 0 10px #ff69b4;
+        }
+
+        .char-info h3 {
+            color: #ff69b4;
+            font-size: 24px;
+            margin: 0 0 8px 0;
+        }
+
+        .char-info p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #ccc;
+        }
+
+        /* 底部 */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            background: #000;
+            color: #666;
+            border-top: 1px solid #222;
+        }
+
+        /* 鼠标爱心特效 */
+        .heart {
+            position: fixed;
+            pointer-events: none;
+            animation: heartAnim 0.6s forwards;
+            z-index: 999;
+            color: #ff69b4;
+        }
+        @keyframes heartAnim {
+            0% { opacity: 1; transform: scale(0.5); }
+            50% { transform: scale(1); }
+            100% { opacity: 0; transform: translateY(-30px) scale(0.5); }
+        }
+
+        /* 樱花飘落 */
+        .sakura {
+            position: fixed;
+            top: -10px;
+            z-index: -1;
+            color: #ffc0cb;
+            pointer-events: none;
+            animation: sakuraAnim linear infinite;
+        }
+        @keyframes sakuraAnim {
+            0% { transform: translateY(-10px) rotate(0deg); opacity: 0.8; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* 跳转容器动画 */
+        .page-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.45s ease, transform 0.45s ease;
+        }
+        .page-section.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 手机端 */
+        @media (max-width: 768px) {
+            .char-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px;
+            }
+            .char-img {
+                margin: 0 auto 15px;
+                width: 180px;
+                height: 220px;
+            }
+            .hero h1 {
+                font-size: 42px;
+            }
+            .hero p {
+                font-size: 16px;
+            }
+            .section-title {
+                font-size: 28px;
+            }
+            .char-info h3 {
+                font-size: 22px;
+            }
+            .char-info p {
+                font-size: 15px;
+            }
+
+            /* 手机点击震动动画 */
+            .phone-touch {
+                animation: phoneTap 0.4s ease forwards;
+            }
+            @keyframes phoneTap {
+                0% { transform: scale(1); }
+                50% { transform: scale(0.92); }
+                100% { transform: scale(1); }
+            }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <img src="logo.png" alt="周の恋">
+    <a href="#home" onclick="navClick(this)">首页</a>
+    <a href="#story" onclick="navClick(this)">世界观</a>
+    <a href="#char" onclick="navClick(this)">角色</a>
+</nav>
+
+<!-- 首页 -->
+<section id="home" class="hero page-section active">
+    <h1>周の恋</h1>
+    <p id="zhouQuote">“在这个冰冷的世界里，只有周的眉毛能给你温度。”</p>
+    <button class="video-btn" onclick="openVideo()">观看宣传视频</button>
+</section>
+
+<!-- 视频弹窗 -->
+<div class="video-modal" id="videoModal">
+    <button class="close-video" onclick="closeVideo()">×</button>
+    <video controls src="video.mp4"></video>
+</div>
+
+<!-- 世界观 -->
+<section id="story" class="section page-section">
+    <h2 class="section-title">STORY</h2>
+    <p style="font-size: 16px; line-height: 1.8; color: #ddd;">
+        这是一个关于命运、关于选择、关于那学校的故事。<br>
+        当平凡的你踏入这所学校，命运的齿轮开始转动。那个叫周昊的男人，
+        那个在宿舍里被众星捧月的焦点，正在等待着你的回应。<br><br>
+        羽毛球是你的强项<br>
+        <strong>你的每一个选项，都将决定你们之间的距离。</strong>
+    </p>
+</section>
+
+<!-- 角色 -->
+<section id="char" class="section page-section">
+    <h2 class="section-title">CHARACTER</h2>
+
+    <div class="char-card">
+        <img src="char1.png" alt="周" class="char-img">
+        <div class="char-info">
+            <h3>男主角：周 (Zhou)</h3>
+            <p><strong>CV：</strong> 食堂阿姨的吆喝声</p>
+            <p><strong>台词：</strong> “怎么，难道你不觉得我很帅吗？”</p>
+            <p>神秘的高冷男子，总是用一种三分讥笑四分漫不经心的眼神看着世界。
+            他的眉毛是他力量的源泉，传说没人能活着走出他的凝视。</p>
+        </div>
+    </div>
+
+    <div class="char-card">
+        <img src="char2.png" alt="巴士周" class="char-img">
+        <div class="char-info">
+            <h3>隐藏形态：巴士周</h3>
+            <p><strong>出没地点：</strong> 公交车后排</p>
+            <p>当周坐上巴士，他会进入一种特殊的“贤者模式”。
+            据说他在思考宇宙的终极真理，或者只是在发呆。</p>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <p>© 2026 周の恋制作组. All Rights Reserved.</p>
+    <p>这是一个充满爱的整活项目</p>
+</footer>
+
+<script>
+    // 基础滚动动画
+    const sections = document.querySelectorAll('.section, .char-card');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('show');
+            }
+        });
+    }, { threshold: 0.1 });
+    sections.forEach(el => observer.observe(el));
+
+    // 1. 周の随机台词
+    const zhouLines = [
+        "“在这个冰冷的世界里，只有周的眉毛能给你温度。”",
+        "“怎么，难道你不觉得我很帅吗？”",
+        "“巴士上的贤者模式已开启。”",
+        "“没人能活着走出我的凝视。”",
+        "“你的每一个选项，都将决定你们之间的距离。”"
+    ];
+    document.getElementById('zhouQuote').innerText = zhouLines[Math.floor(Math.random() * zhouLines.length)];
+
+    // 2. 鼠标爱心跟随
+    document.addEventListener('mousemove', e => {
+        const heart = document.createElement('div');
+        heart.className = 'heart';
+        heart.innerText = '♥';
+        heart.style.left = e.pageX - 5 + 'px';
+        heart.style.top = e.pageY - 5 + 'px';
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 600);
+    });
+
+    // 5. 樱花飘落
+    function createSakura() {
+        const s = document.createElement('div');
+        s.className = 'sakura';
+        s.innerText = '🌸';
+        const size = Math.random() * 12 + 10;
+        s.style.left = Math.random() * 100 + 'vw';
+        s.style.fontSize = size + 'px';
+        s.style.animationDuration = (Math.random() * 8 + 6) + 's';
+        document.body.appendChild(s);
+        setTimeout(() => s.remove(), 14000);
+    }
+    setInterval(createSakura, 400);
+
+    // ==============================================
+    // 高级导航跳转 + 简约动画
+    // ==============================================
+    function navClick(link) {
+        const targetId = link.getAttribute('href').slice(1);
+        const allPages = document.querySelectorAll('.page-section');
+
+        // 淡出当前页面
+        allPages.forEach(page => page.classList.remove('active'));
+
+        // 淡入目标页面
+        setTimeout(() => {
+            document.getElementById(targetId).classList.add('active');
+        }, 10);
+
+        // 手机点击震动动画
+        if (window.innerWidth <= 768) {
+            document.querySelector('nav').classList.add('phone-touch');
+            setTimeout(() => {
+                document.querySelector('nav').classList.remove('phone-touch');
+            }, 400);
+        }
+    }
+
+    // 视频弹窗功能
+    function openVideo() {
+        document.getElementById('videoModal').classList.add('show');
+    }
+    function closeVideo() {
+        document.getElementById('videoModal').classList.remove('show');
+        let video = document.querySelector('.video-modal video');
+        video.pause();
+        video.currentTime = 0;
+    }
+</script>
+
+</body>
+</html>
