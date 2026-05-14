@@ -67,10 +67,10 @@
             width: 100%;
         }
 
-        /* 首屏 */
+        /* 首屏 —— 已修复背景图 */
         .hero {
             height: 100vh;
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://cdn.jsdelivr.net/gh/AMGAQ/zhoulian@main/bg_photo.jpg');
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://fastly.jsdelivr.net/gh/AMGAQ/zhoulian@main/bg_photo.jpg');
             background-size: cover;
             background-position: center;
             display: flex;
@@ -253,7 +253,7 @@
         .char-info h3 {
             color: #ff69b4;
             font-size: 24px;
-            margin: 0 0 8px 0;
+            margin: 0 8px 0 0;
         }
 
         .char-info p {
@@ -522,7 +522,7 @@
         setTimeout(() => heart.remove(), 600);
     });
 
-    // 5. 樱花飘落
+    // 樱花飘落
     function createSakura() {
         const s = document.createElement('div');
         s.className = 'sakura';
