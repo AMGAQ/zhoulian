@@ -191,7 +191,7 @@
             text-shadow: 0 0 10px #ff69b4;
         }
 
-        /* 角色卡片（苹果式放大动画） */
+        /* 角色卡片 */
         .char-card {
             background: #1a1a1a;
             border: 1px solid #333;
@@ -214,7 +214,6 @@
             transform: translateY(0);
         }
 
-        /* 苹果式放大 */
         .char-card:hover {
             transform: translateY(-5px) scale(1.05);
             box-shadow: 0 12px 25px rgba(255, 105, 180, 0.25);
@@ -311,6 +310,66 @@
             transform: translateY(0);
         }
 
+        /* 漫画鉴赏弹窗 */
+        .comic-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.97);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .comic-modal.show {
+            display: flex;
+        }
+        .comic-wrap {
+            position: relative;
+            max-width: 90%;
+            max-height: 80vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .comic-img {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 10px;
+            border: 2px solid #ff69b4;
+            display: none;
+        }
+        .comic-img.active {
+            display: block;
+            animation: fadeIn 0.4s;
+        }
+        .close-comic {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            font-size: 40px;
+            color: #ff69b4;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .comic-prev, .comic-next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 30px;
+            color: #ff69b4;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+        }
+        .comic-prev { left: -50px; }
+        .comic-next { right: -50px; }
+
         /* 手机端 */
         @media (max-width: 768px) {
             .char-card {
@@ -339,7 +398,9 @@
                 font-size: 15px;
             }
 
-            /* 手机点击震动动画 */
+            .comic-prev { left: 10px; }
+            .comic-next { right: 10px; }
+
             .phone-touch {
                 animation: phoneTap 0.4s ease forwards;
             }
@@ -358,6 +419,7 @@
     <a href="#home" onclick="navClick(this)">首页</a>
     <a href="#story" onclick="navClick(this)">世界观</a>
     <a href="#char" onclick="navClick(this)">角色</a>
+    <a href="javascript:openComic()">漫画鉴赏</a>
 </nav>
 
 <!-- 首页 -->
@@ -371,6 +433,17 @@
 <div class="video-modal" id="videoModal">
     <button class="close-video" onclick="closeVideo()">×</button>
     <video controls src="video.mp4"></video>
+</div>
+
+<!-- 漫画鉴赏弹窗 已配置好CDN地址 -->
+<div class="comic-modal" id="comicModal">
+    <button class="close-comic" onclick="closeComic()">×</button>
+    <div class="comic-wrap">
+        <img class="comic-img active" src="https://cdn.jsdelivr.net/gh/AMGAQ/zhoulian@main/comic1.png" alt="漫画1">
+        <img class="comic-img" src="https://cdn.jsdelivr.net/gh/AMGAQ/zhoulian@main/comic2.png" alt="漫画2">
+        <button class="comic-prev" onclick="prevComic()">←</button>
+        <button class="comic-next" onclick="nextComic()">→</button>
+    </div>
 </div>
 
 <!-- 世界观 -->
@@ -463,28 +536,14 @@
     }
     setInterval(createSakura, 400);
 
-    // ==============================================
-    // 高级导航跳转 + 简约动画
-    // ==============================================
+    // 高级导航跳转
     function navClick(link) {
         const targetId = link.getAttribute('href').slice(1);
         const allPages = document.querySelectorAll('.page-section');
-
-        // 淡出当前页面
         allPages.forEach(page => page.classList.remove('active'));
-
-        // 淡入目标页面
         setTimeout(() => {
             document.getElementById(targetId).classList.add('active');
         }, 10);
-
-        // 手机点击震动动画
-        if (window.innerWidth <= 768) {
-            document.querySelector('nav').class.add('phone-touch');
-            setTimeout(() => {
-                document.querySelector('nav').classList.remove('phone-touch');
-            }, 400);
-        }
     }
 
     // 视频弹窗功能
@@ -496,6 +555,29 @@
         let video = document.querySelector('.video-modal video');
         video.pause();
         video.currentTime = 0;
+    }
+
+    // 漫画鉴赏切换功能
+    let comicIndex = 0;
+    const comicImgs = document.querySelectorAll('.comic-img');
+
+    function openComic() {
+        document.getElementById('comicModal').classList.add('show');
+    }
+    function closeComic() {
+        document.getElementById('comicModal').classList.remove('show');
+    }
+    function showComic(n) {
+        comicImgs.forEach(img => img.classList.remove('active'));
+        comicImgs[n].classList.add('active');
+    }
+    function prevComic() {
+        comicIndex = (comicIndex - 1 + comicImgs.length) % comicImgs.length;
+        showComic(comicIndex);
+    }
+    function nextComic() {
+        comicIndex = (comicIndex + 1) % comicImgs.length;
+        showComic(comicIndex);
     }
 </script>
 
